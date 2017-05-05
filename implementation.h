@@ -7,7 +7,9 @@
 using namespace std;
 
 struct Node{
+	char* str;
 	Node* children[256];
+	bool isTerminating;
 };
 
 void impl1(const char* strings, int* indices, int totalLength, int numStrings, int bsize, int bcount);
