@@ -1,0 +1,8 @@
+test
+out.txt
+*.o
+*.tar
+*.zip
+*.gz
+*.tgz
+.nfs*
