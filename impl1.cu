@@ -30,4 +30,8 @@ void impl1(const char* strings, int* indices, int totalLength, int numStrings, i
 	// put code here
 
 	cout << "running time: " << timer.get() << " ms" << endl;
+
+	// free
+	cudaFree(d_strings);
+	cudaFree(d_indices);
 }
