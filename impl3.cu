@@ -1,17 +1,15 @@
 #include "implementation.h"
 
-void impl3(const char* strings, int* indices, int totalLength, int numStrings, int bsize, int bcount){
+void impl3(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
 	Timer timer;
-	char* d_strings = NULL;
+	char* d_text = NULL;
 	int* d_indices = NULL;
 
-	cudaMalloc((void**)&d_strings, sizeof(char)*totalLength);
+	cudaMalloc((void**)&d_text, sizeof(char)*totalLength);
 	cudaMalloc((void**)&d_indices, sizeof(int)*numStrings);
 
-	cudaMemcpy(d_strings, strings, sizeof(char)*totalLength, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_text, text, sizeof(char)*totalLength, cudaMemcpyHostToDevice);
 	cudaMemcpy(d_indices, indices, sizeof(int)*numStrings, cudaMemcpyHostToDevice);
-
-
 
 	timer.set();
 
@@ -20,6 +18,6 @@ void impl3(const char* strings, int* indices, int totalLength, int numStrings, i
 	cout << "running time: " << timer.get() << " ms" << endl;
 	
 	// free
-	cudaFree(d_strings);
+	cudaFree(d_text);
 	cudaFree(d_indices);
 }

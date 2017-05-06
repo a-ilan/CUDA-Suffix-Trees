@@ -1,6 +1,6 @@
 #include "implementation.h"
 
-void impl2(const char* strings, int* indices, int totalLength, int numStrings, int bsize, int bcount){
+void impl2(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
 	Timer timer;
 
 	timer.set();

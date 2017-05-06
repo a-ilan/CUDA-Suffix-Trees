@@ -1,6 +1,6 @@
 #include "implementation.h"
 
-__global__ void suffix_tree_construction(const char* strings, int* indices, int totalLength, int numStrings){
+__global__ void suffix_tree_construction(const char* text, int* indices, int totalLength, int numStrings){
 	const int tid = threadIdx.x + blockDim.x*blockIdx.x;
 	const int nThreads = blockDim.x*gridDim.x;
 	const int iter = totalLength%nThreads == 0? totalLength/nThreads : totalLength/nThreads+1;
@@ -13,17 +13,16 @@ __global__ void suffix_tree_construction(const char* strings, int* indices, int 
 	}
 }
 
-void impl1(const char* strings, int* indices, int totalLength, int numStrings, int bsize, int bcount){
-        char* d_strings = NULL;
+void impl1(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
+	Timer timer;
+        char* d_text = NULL;
         int* d_indices = NULL;
 
-        cudaMalloc((void**)&d_strings, sizeof(char)*totalLength);
+        cudaMalloc((void**)&d_text, sizeof(char)*totalLength);
         cudaMalloc((void**)&d_indices, sizeof(int)*numStrings);
 
-        cudaMemcpy(d_strings, strings, sizeof(char)*totalLength, cudaMemcpyHostToDevice);
+        cudaMemcpy(d_text, text, sizeof(char)*totalLength, cudaMemcpyHostToDevice);
         cudaMemcpy(d_indices, indices, sizeof(int)*numStrings, cudaMemcpyHostToDevice);
-
-	Timer timer;
 
 	timer.set();
 
@@ -32,6 +31,6 @@ void impl1(const char* strings, int* indices, int totalLength, int numStrings, i
 	cout << "running time: " << timer.get() << " ms" << endl;
 
 	// free
-	cudaFree(d_strings);
+	cudaFree(d_text);
 	cudaFree(d_indices);
 }
