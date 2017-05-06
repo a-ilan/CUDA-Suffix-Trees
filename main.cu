@@ -72,9 +72,11 @@ int main(int argc, char** argv){
 		//parse input file
 		const char* text; //all the strings concatenated into a single string
 		int* indices; //the starting index of each string
+		int* suffixes; //the starting index of each suffix
 		int totalLength; //total length of all the strings
 		int numStrings; //number of strings
-		parse_file(&inputFile,&text,&indices,&totalLength,&numStrings);
+		int numSuffixes; //number of suffixes
+		parse_file(&inputFile,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
 		inputFile.close();
 
 		//print program properties

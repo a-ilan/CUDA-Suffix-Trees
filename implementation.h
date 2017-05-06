@@ -5,6 +5,7 @@
 #include <vector>
 #include "utils.h"
 using namespace std;
+#define NUM_CHILDREN 256
 
 struct Node{
 	//this is a compressed suffix tree,
@@ -22,7 +23,7 @@ struct Node{
 	int end;
 
 	//children nodes
-	Node* children[256];
+	Node* children[NUM_CHILDREN];
 
 	//for leaf nodes, it stores the "index" of the suffix
 	//index is the starting poisition of the suffix in "text"

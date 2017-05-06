@@ -2,6 +2,7 @@
 #define UTILS_H
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <sys/time.h>
@@ -14,6 +15,8 @@ public:
 	double get();
 };
 
-void parse_file(ifstream* inFile, const char** strings, int** indices, int* totalLength, int* numStrings);
-
+void parse_file(ifstream* inFile, 
+		const char** text, int** indices, int** suffixIndices,  
+		int* totalLength, int* numStrings, int* numSuffixes);
+	
 #endif
