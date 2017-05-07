@@ -2,7 +2,7 @@
 typedef unsigned long long int address_type;
 
 __device__ Node* createNode(int start, int end);
-__device__ void splitNode(Node** address, int position, const char* text);
+__device__ bool splitNode(Node** address, int position, const char* text);
 __device__ void combineNode(Node** address, Node* node2, const char* text);
 __device__ void addNode(Node** address, Node* node2, const char* text);
 
@@ -16,7 +16,8 @@ __device__ Node* createNode(int start, int end){
 }
 
 //split a node into a parent and child node at a specified position
-__device__ void splitNode(Node** address, int position, const char* text){
+//return true if node successfully split
+__device__ bool splitNode(Node** address, int position, const char* text){
 	//current node;
 	Node* node = *address;
 
@@ -43,7 +44,9 @@ __device__ void splitNode(Node** address, int position, const char* text){
 		//free parentNode and branchingNode
 		free(parentNode);
 		free(branchingNode);
+		return false;
 	}
+	return true;
 }
 
 //combines the suffix of a node in the tree with another node
@@ -58,11 +61,18 @@ __device__ void combineNode(Node** address, Node* node2, const char* text){
 	int j_end = node2->end;
 	while(i < i_end && j < j_end){
 		if(text[i] != text[j]){
-			splitNode(address,i,text); 
-			node2->start = j;
-			char c = text[j];
-			Node** address2 = &((*address)->children[c]);
-			addNode(address2,node2,text);
+			bool isSplit = splitNode(address,i,text); 
+			if(isSplit){
+				node2->start = j;
+				char c = text[j];
+				Node** address2 = &((*address)->children[c]);
+				addNode(address2,node2,text);
+			}
+			else{
+				//failed to split because another node already caused it split
+				//try again
+				combineNode(address,node2,text);
+			}
 			break;
 		}
 		i++;
