@@ -100,7 +100,7 @@ __device__ void addNode(Node** address, Node* child, const char* text){
 __global__ void construct_suffix_tree(Node* root, const char* text, int* indices, int totalLength, int numStrings){
 	const int tid = threadIdx.x + blockDim.x*blockIdx.x;
 	const int nThreads = blockDim.x*gridDim.x;
-	const int iter = totalLength%nThreads == 0? totalLength/nThreads : totalLength/nThreads+1;
+	const int iter = numStrings%nThreads == 0? numStrings/nThreads : numStrings/nThreads+1;
 
 	for(int i = 0; i < iter; i++){
 		int dataid = tid + i*nThreads;
