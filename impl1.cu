@@ -1,6 +1,11 @@
 #include "implementation.h"
 typedef unsigned long long int address_type;
 
+__device__ Node* createNode(int start, int end);
+__device__ void splitNode(Node** address, int position, const char* text);
+__device__ void combineNode(Node** address, Node* node2, const char* text);
+__device__ void addNode(Node** address, Node* node2, const char* text);
+
 __device__ Node* createNode(int start, int end){
 	Node* node = (Node*)malloc(sizeof(Node));
 	for(int i = 0; i < NUM_CHILDREN; i++)
@@ -10,72 +15,7 @@ __device__ Node* createNode(int start, int end){
 	return node;
 }
 
-__device__ Node* createNode(const char* text, int dataid){
-	Node* node = (Node*)malloc(sizeof(Node));
-	for(int i = 0; i < NUM_CHILDREN; i++)
-		node->children[i] = NULL;
-	node->start = dataid;
-	int curr = node->start;
-	while(text[curr] != '$') curr++;
-	node->end = curr;
-	return node;
-}
-
-__device__ Node* copyNode(Node* other){
-	Node* node = (Node*)malloc(sizeof(Node));
-	for(int i = 0; i < NUM_CHILDREN; i++)
-		node->children[i] = other->children[i];
-	node->start = other->start;
-	node->end = other->end;
-	return node;
-}
-
-//atomically create a child node from parent at childIndex
-__device__ Node* atomicCreateChildNode(Node* parent, int childIndex, const char* text, int dataid){
-	  //address of the child
-	Node** address = &(parent->children[childIndex]);
-	Node* child = *address;
-	if(child == NULL){
-		child = createNode(text,dataid);
-		  //address = address==NULL? child : address;
-		atomicCAS((address_type*)address, NULL, (address_type)child); //set address = child
-		if(child != *address){ //check if atomicCAS failed
-			//if it failed it means another thread already created the node
-			//so so the edge need to branch into 2 different nodes (child1,child2) 
-			Node* child1 = child; 
-			Node* child2 = copyNode(*address);
-			Node* parent = *address;
-
-			//combine child and child2
-			int child1_curr = child1->start;
-			int child2_curr = child2->start;
-			while(text[child1_curr] != '$' && text[child2_curr] != '$'){
-				if(text[child1_curr] != text[child2_curr]){
-					child1->start = child1_curr;
-					child2->start = child2_curr;
-
-					//cut the edge
-					int minEnd = atomicMin(&parent->end, child2_curr);
-					if(minEnd != child2->end){
-						//another thread has cut the edge
-						
-					} else {
-						atomicCreateChildNode(parent,child2_curr,text,dataid);
-						atomicCreateChildNode(parent,child1_curr,text,dataid);
-					}
-					break;
-				}
-				child1_curr++;
-				child2_curr++;
-			}
-		}
-	}
-	return child;
-}
-
-__device__ void addNode(Node** address, Node* node2, const char* text);
-__device__ void getNodeString(char* buf, Node* node, const char* text);
-
+//split a node into a parent and child node at a specified position
 __device__ void splitNode(Node** address, int position, const char* text){
 	//current node;
 	Node* node = *address;
@@ -98,56 +38,52 @@ __device__ void splitNode(Node** address, int position, const char* text){
 	char character = text[position];
 	parentNode->children[character] = branchingNode;
 
-	char buf1[255], buf2[255];
-	getNodeString(buf1,parentNode,text);
-	getNodeString(buf2,branchingNode,text);
-	printf("parentNode %s, branchingNode %s\n",buf1,buf2);
-
 	atomicCAS((address_type*)address, (address_type)node, (address_type)parentNode);
 	if(*address != parentNode){
 		//free parentNode and branchingNode
 		free(parentNode);
 		free(branchingNode);
-		//add node to *address
-		addNode(address,node,text);
 	}
 }
 
+//combines the suffix of a node in the tree with another node
 //address is the address of node1
 //node1 is a node in the suffix tree
 //node2 is a node that needs to be added to the suffix tree
-__device__ void addNode(Node** address, Node* node2, const char* text){
+__device__ void combineNode(Node** address, Node* node2, const char* text){
 	Node* node1 = *address;
 	int i = node1->start;
 	int j = node2->start;
-	while(text[i] != '$' && text[j] != '$'){
+	int i_end = node1->end;
+	int j_end = node2->end;
+	while(i < i_end && j < j_end){
 		if(text[i] != text[j]){
-			splitNode(address,i,text);
-			//add node 2
+			splitNode(address,i,text); 
+			node2->start = j;
+			char c = text[j];
+			Node** address2 = &((*address)->children[c]);
+			addNode(address2,node2,text);
 			break;
 		}
 		i++;
 		j++;
 	}
-	if(text[i] == '$' && text[j] != '$'){
-
+	if(i == i_end && j != j_end){
+		node2->start = j;
+		char c = text[j];
+		Node** address2 = &((*address)->children[c]);
+		addNode(address2,node2,text);
 	}
-	else if(text[i] != '$' && text[j] == '$'){
-
+	else if(i != i_end && j == j_end){
 	}
 }
 
-__device__ void addSuffix(Node* parent, int start, int end, const char* text){
-	char character = text[start];
-	Node** address = &(parent->children[character]);
-	Node* child = *address;
-	if(child == NULL){
-		child = createNode(start,end);
-		  //address = address==NULL? child : address;
-		atomicCAS((address_type*)address, NULL, (address_type)child); //set address = child
-		if(child != *address){ //check if atomicCAS failed
-			addNode(address,child,text);
-		}
+//add a child node to a node in the tree (*address)
+__device__ void addNode(Node** address, Node* child, const char* text){
+	  //address = address==NULL? child : address;
+	atomicCAS((address_type*)address, NULL, (address_type)child); //set address = child
+	if(child != *address){ //check if atomicCAS failed
+		combineNode(address,child,text);
 	}
 }
 
@@ -161,18 +97,22 @@ __global__ void construct_suffix_tree(Node* root, const char* text, int* indices
 		if(dataid < numStrings){
 			int start = indices[dataid];
 			int end = dataid == numStrings-1? totalLength : indices[dataid+1];
-			addSuffix(root,start,end,text);
-
-			//char character = text[start];
-			//if(character == '$') return;
-			//Node* child = atomicCreateChildNode(root,character,text,dataid);
-			//Node* child = root->children[character];
+			//for(; text[start] != '#'; start++){
+			char character = text[start];
+			Node** address = &(root->children[character]);
+			Node* child = *address;
+			if(child == NULL){
+				child = createNode(start,end);
+				addNode(address,child,text);
+			} else {
+				combineNode(address,child,text);
+			}
 		}
 	}
 }
 
 
-__device__ void getNodeString(char* buf, Node* node, const char* text){
+__device__ int getNodeString(char* buf, Node* node, const char* text){
 	int start = node->start;
 	int end = node->end;
 	int i = 0;
@@ -181,23 +121,23 @@ __device__ void getNodeString(char* buf, Node* node, const char* text){
 		i++;
 	}
 	buf[i] = '\0';
+	return i;
 }
 
-__global__ void serialize_suffix_tree(Node* root, const char* text){
+__device__ void printTree(Node* root, const char* text, int indent){
 	for(int i = 0; i < NUM_CHILDREN; i++){
-		if(root->children[i] != NULL){
+		Node* child = root->children[i];
+		if(child != NULL){
 			char buf[255];
-			getNodeString(buf,root->children[i],text);
-			printf("%c - %s\n",(char)i,buf);
-			for(int j = 0; j < NUM_CHILDREN; j++){
-				if(root->children[i]->children[j] != NULL){
-					char buf[255];
-					getNodeString(buf,root->children[i]->children[j],text);
-					printf("  %c - %s\n",(char)j,buf);
-				}
-			}
+			int size = getNodeString(buf,child,text);
+			printf("%*s\n",size+indent, buf);
+			printTree(child,text,indent+1);
 		}
 	}
+}
+
+__global__ void print_tree(Node* root, const char* text){
+	printTree(root,text,0);
 }
 
 void impl1(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
@@ -226,7 +166,7 @@ void impl1(const char* text, int* indices, int totalLength, int numStrings, int 
 	construct_suffix_tree<<<bcount,bsize>>>(d_root,d_text,d_indices,totalLength,numStrings);
 	//construct_suffix_tree<<<1,1>>>(d_root,d_text,d_indices,totalLength,numStrings);
 	
-	serialize_suffix_tree<<<1,1>>>(d_root,d_text);
+	print_tree<<<1,1>>>(d_root,d_text);
 
 	cout << "running time: " << timer.get() << " ms" << endl;
 
