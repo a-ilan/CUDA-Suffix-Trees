@@ -5,8 +5,11 @@
 #include <vector>
 #include "utils.h"
 using namespace std;
-#define NUM_CHILDREN 256
 
+#define NUM_CHILDREN 256
+typedef unsigned long long int address_type;
+
+//Node struct
 struct Node{
 	//this is a compressed suffix tree,
 	//which means an edge can have multiple characters.
@@ -30,9 +33,17 @@ struct Node{
 	int suffixIndex;
 };
 
-// function prototype
+// function prototype in impl1.h, impl2.h, and impl3.h
 void impl1(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount);
 void impl2(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount);
 void impl3(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount);
+
+// Node functions in impl_util.cu
+__device__ Node* createNode(int start, int end);
+__device__ bool splitNode(struct Node** address, int position, const char* text);
+__device__ void combineNode(struct Node** address, struct Node* node2, const char* text);
+__device__ void addNode(struct Node** address, struct Node* node2, const char* text);
+__device__ void printNode(struct Node* node, const char* text);
+__global__ void printTree(struct Node* root, const char* text);
 
 #endif

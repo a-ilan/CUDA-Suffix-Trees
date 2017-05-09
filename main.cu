@@ -23,14 +23,14 @@ int main(int argc, char** argv){
 		ofstream outputFile;
 		int bsize = 0, bcount = 0;
 		int method = 0;
-		int device_id = 0;
-		cudaDeviceProp device_prop;
-		char* device_name = NULL;
+		int deviceID = 0;
+		cudaDeviceProp deviceProp;
+		char* deviceName = NULL;
 
 		//check that CUDA is supported and get the name of the device
-		CUDAErrorCheck(cudaSetDevice(device_id));
-		CUDAErrorCheck(cudaGetDeviceProperties(&device_prop, device_id));
-		device_name = device_prop.name;
+		CUDAErrorCheck(cudaSetDevice(deviceID));
+		CUDAErrorCheck(cudaGetDeviceProperties(&deviceProp, deviceID));
+		deviceName = deviceProp.name;
 	
 		//parse program arguments
 		for( int i = 1; i < argc; i++ ){
@@ -76,11 +76,11 @@ int main(int argc, char** argv){
 		int totalLength; //total length of all the strings
 		int numStrings; //number of strings
 		int numSuffixes; //number of suffixes
-		parse_file(&inputFile,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
+		parseFile(&inputFile,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
 		inputFile.close();
 
 		//print program properties
-		cout << "Device: " << device_name;
+		cout << "Device: " << deviceName;
 		cout << ", bsize: " << bsize << ", bcount: " << bcount;
 		cout << ", method: " << method << endl;	
 		cout << "Input file: " << inputFileName;

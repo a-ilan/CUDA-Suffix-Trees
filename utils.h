@@ -8,6 +8,7 @@
 #include <sys/time.h>
 using namespace std;
 
+
 class Timer {
 	struct timeval startingTime;
 public:
@@ -15,8 +16,8 @@ public:
 	double get();
 };
 
-void parse_file(ifstream* inFile, 
+void parseFile(ifstream* inFile, 
 		const char** text, int** indices, int** suffixIndices,  
 		int* totalLength, int* numStrings, int* numSuffixes);
-	
+
 #endif

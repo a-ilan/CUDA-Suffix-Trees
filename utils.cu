@@ -18,7 +18,7 @@ double Timer::get(){
 //    and '$' specifies the end of a terminating sequence
 //indices: [0, 8, 17, 23]
 //suffixIndices: [0,1,2,3,4, 8,9,10,11,12,13, 17,18,19, 23,24,25]
-void parse_file(ifstream* inFile, 
+void parseFile(ifstream* inFile, 
 		const char** text, int** indices, int** suffixIndices,  
 		int* totalLength, int* numStrings, int* numSuffixes){
 	string line;
