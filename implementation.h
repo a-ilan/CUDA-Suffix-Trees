@@ -34,25 +34,28 @@ struct Node{
 };
 
 // function prototype in impl1.h, impl2.h, and impl3.h
-void impl1(const char* text, int* indices, 
+void impl1(char* text, int* indices, 
 	int totalLength, int numStrings, 
 	int bsize, int bcount);
-void impl2(const char* text, int* indices, int* suffixes,
+void impl2(char* text, int* indices, int* suffixes,
 	int totalLength, int numStrings, int numSuffixes,
 	int bsize, int bcount);
-void impl3(const char* text, int* indices, 
+void impl3(char* text, int* indices, 
 	int totalLength, int numStrings, 
 	int bsize, int bcount);
 
 // Node functions in impl_util.cu
 __device__ Node* createNode(int start, int end);
-__device__ bool splitNode(struct Node** address, int position, const char* text);
-__device__ void combineNode(struct Node** address, struct Node* node2, const char* text);
-__device__ void addNode(struct Node** address, struct Node* node2, const char* text);
-__device__ void printNode(struct Node* node, const char* text);
-__global__ void printTree(struct Node* root, const char* text);
+__device__ bool splitNode(Node** address, int position, char* text);
+__device__ void combineNode(Node** address, struct Node* node2, char* text);
+__device__ void addNode(Node** address, Node* node2, char* text);
+__device__ void printNode(Node* node, char* text);
+__global__ void printTree(Node* root, char* text);
 // count characters
-void countChar(Node* root, int* numChar);
+__host__ __device__ void countChar(Node* root, int* numChar);
 // pre-order traversal
-void serialize(Node* root, const char* text, char* output, int* numChar, int* counter);
+__host__ __device__ void serialize(Node* root, char* text, char* output, int* counter);
+// serialize the tree
+int getSerialSuffixTree(Node* d_root, char* d_text, char** output);
+
 #endif

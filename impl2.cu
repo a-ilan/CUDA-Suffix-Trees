@@ -1,13 +1,13 @@
 #include "implementation.h"
 
-__device__ int getEndOfSuffix(int start, const char* text){
+__device__ int getEndOfSuffix(int start, char* text){
 	int i = start;
 	while(text[i] != '$') i++;
 	return i+1;
 }
 
 __global__ void constructSuffixTree(Node* root, 
-		const char* text, int* indices, int* suffixes, 
+		char* text, int* indices, int* suffixes, 
 		int totalLength, int numStrings, int numSuffixes){
 	const int tid = threadIdx.x + blockDim.x*blockIdx.x;
 	const int nThreads = blockDim.x*gridDim.x;
@@ -33,7 +33,7 @@ __global__ void constructSuffixTree(Node* root,
 	}
 }
 
-void impl2(const char* text, int* indices, int* suffixes, 
+void impl2(char* text, int* indices, int* suffixes, 
 		int totalLength, int numStrings, int numSuffixes, 
 		int bsize, int bcount){
 	Timer timer;

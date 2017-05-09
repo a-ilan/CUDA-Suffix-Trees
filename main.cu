@@ -70,7 +70,7 @@ int main(int argc, char** argv){
 		}
 
 		//parse input file
-		const char* text; //all the strings concatenated into a single string
+		char* text; //all the strings concatenated into a single string
 		int* indices; //the starting index of each string
 		int* suffixes; //the starting index of each suffix
 		int totalLength; //length of text (includes term sequence)
@@ -119,6 +119,9 @@ int main(int argc, char** argv){
 		}
 
 		//clean program memory
+		delete[] text;
+		delete[] indices;
+		delete[] suffixes;
 		CUDAErrorCheck(cudaDeviceReset());
 		outputFile.close();
 

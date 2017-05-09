@@ -1,6 +1,6 @@
 #include "implementation.h"
 
-__global__ void constructSuffixTree(Node* root, const char* text, int* indices, int totalLength, int numStrings){
+__global__ void constructSuffixTree(Node* root, char* text, int* indices, int totalLength, int numStrings){
 	const int tid = threadIdx.x + blockDim.x*blockIdx.x;
 	const int nThreads = blockDim.x*gridDim.x;
 	const int iter = numStrings%nThreads == 0? numStrings/nThreads : numStrings/nThreads+1;
@@ -26,7 +26,7 @@ __global__ void constructSuffixTree(Node* root, const char* text, int* indices, 
 	}
 }
 
-void impl1(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
+void impl1(char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
 	Timer timer;
 	Node root;
 	root.start=0;

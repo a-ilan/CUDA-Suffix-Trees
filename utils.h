@@ -24,7 +24,7 @@ public:
 };
 
 void parseFile(ifstream* inFile, 
-		const char** text, int** indices, int** suffixIndices,  
+		char** text, int** indices, int** suffixIndices,  
 		int* totalLength, int* numStrings, int* numSuffixes) 
 		throw (NotAllowedSymbolException);
 

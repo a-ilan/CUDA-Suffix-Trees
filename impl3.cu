@@ -1,6 +1,6 @@
 #include "implementation.h"
 
-void impl3(const char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
+void impl3(char* text, int* indices, int totalLength, int numStrings, int bsize, int bcount){
 	Timer timer;
 	char* d_text = NULL;
 	int* d_indices = NULL;
