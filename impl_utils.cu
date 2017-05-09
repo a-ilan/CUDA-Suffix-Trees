@@ -134,7 +134,7 @@ __host__ __device__ void countChar(Node* root, int* numChar){
     if(root == NULL){
 	return;
     }
-    *numChar++;
+    *numChar += root->end - root->start;
     for(int i = 0 ; i < NUM_CHILDREN ; i++){
 	countChar(root->children[i], numChar);
     }
@@ -143,10 +143,20 @@ __host__ __device__ void countChar(Node* root, int* numChar){
 
 // pre-order traversal
 __host__ __device__ void serialize(Node* root, const char* text, char* output, int* numChar, int* counter){
-    if(counter == 0){
-	output = (char*) malloc(sizeof(char)* (*numChar));
+    // base case
+    if(root == NULL) return;
+    // initialize output
+    if(*counter == 0) output = (char*) malloc(sizeof(char)* (*numChar));
+    int num = root->end - root->start;
+    // copy characters
+    for(int i = 0; i < num ; i++){
+	output[*counter+i] = text[root->start + i];
     }
-
-
+    *counter += num;
+    for(int i = 0 ; i < NUM_CHILDREN; i++){
+	serialize(root->children[i], text, output, numChar, counter);
+    }
+    output[*counter] = ')';
+    *counter++;
 }
 
