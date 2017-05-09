@@ -5,6 +5,7 @@ __device__ Node* createNode(int start, int end);
 __device__ bool splitNode(Node** address, int position, const char* text);
 __device__ void combineNode(Node** address, Node* node2, const char* text);
 __device__ void addNode(Node** address, Node* node2, const char* text);
+__device__ void printNode(Node* node, const char* text);
 
 __device__ Node* createNode(int start, int end){
 	Node* node = (Node*)malloc(sizeof(Node));
@@ -86,6 +87,8 @@ __device__ void combineNode(Node** address, Node* node2, const char* text){
 	}
 	else if(i != i_end && j == j_end){
 	}
+	else {
+	}
 }
 
 //add a child node to a node in the tree (*address)
@@ -107,26 +110,29 @@ __global__ void construct_suffix_tree(Node* root, const char* text, int* indices
 		if(dataid < numStrings){
 			int start = indices[dataid];
 			int end = dataid == numStrings-1? totalLength : indices[dataid+1];
-			//for(; text[start] != '#'; start++){
-			char character = text[start];
-			Node** address = &(root->children[character]);
-			Node* child = *address;
-			if(child == NULL){
-				child = createNode(start,end);
-				addNode(address,child,text);
-			} else {
-				combineNode(address,child,text);
+			for(; text[start] != '#'; start++){
+				char character = text[start];
+				Node** address = &(root->children[character]);
+				Node* child = *address;
+				if(child == NULL){
+					child = createNode(start,end);
+					addNode(address,child,text);
+				} else {
+					child = createNode(start,end);
+					combineNode(address,child,text);
+				}
 			}
 		}
 	}
 }
 
 
-__device__ int getNodeString(char* buf, Node* node, const char* text){
+__device__ int nodeToString(char* buf, Node* node, const char* text){
 	int start = node->start;
 	int end = node->end;
 	int i = 0;
 	for(int j = start; j < end; j++){
+		if(i == 19) break;
 		buf[i] = text[j];
 		i++;
 	}
@@ -134,13 +140,19 @@ __device__ int getNodeString(char* buf, Node* node, const char* text){
 	return i;
 }
 
+__device__ void printNode(Node* node,const char* text){
+	char buf[20];
+	nodeToString(buf,node,text);
+	printf("%s\n",buf);
+}
+
 __device__ void printTree(Node* root, const char* text, int indent){
 	for(int i = 0; i < NUM_CHILDREN; i++){
 		Node* child = root->children[i];
 		if(child != NULL){
-			char buf[255];
-			int size = getNodeString(buf,child,text);
-			printf("%*s\n",size+indent, buf);
+			char buf[20];
+			int size = nodeToString(buf,child,text);
+			printf("%*s\n",indent+size, buf);
 			printTree(child,text,indent+1);
 		}
 	}

@@ -1,6 +1,2 @@
-aab
-aac
-acc
-abc
-ade
-abd
+banana
+apple
