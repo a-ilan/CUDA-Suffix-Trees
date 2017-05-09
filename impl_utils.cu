@@ -125,6 +125,7 @@ __device__ void printTreeRe(Node* root, const char* text, int indent){
 }
 
 __global__ void printTree(Node* root, const char* text){
+	printf("PRINTING TREE:\n");
 	printTreeRe(root,text,0);
 }
 

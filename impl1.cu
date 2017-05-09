@@ -50,11 +50,12 @@ void impl1(const char* text, int* indices, int totalLength, int numStrings, int 
 	timer.set();
 
 	constructSuffixTree<<<bcount,bsize>>>(d_root,d_text,d_indices,totalLength,numStrings);
-	//construct_suffix_tree<<<1,1>>>(d_root,d_text,d_indices,totalLength,numStrings);
+	cudaDeviceSynchronize();
 	
-	printTree<<<1,1>>>(d_root,d_text);
-
 	cout << "running time: " << timer.get() << " ms" << endl;
+
+	printTree<<<1,1>>>(d_root,d_text);
+	cudaDeviceSynchronize();
 
 	// free
 	cudaFree(d_text);

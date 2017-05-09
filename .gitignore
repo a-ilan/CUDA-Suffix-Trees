@@ -1,4 +1,5 @@
 test
+input/*
 out.txt
 *.o
 *.tar

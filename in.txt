@@ -1,2 +1,13 @@
 banana
 apple
+cat
+dog
+grapes
+orange
+pineapple
+blueberries
+elephant
+penguin
+wolf
+watermelon
+avocado
