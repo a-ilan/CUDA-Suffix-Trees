@@ -55,13 +55,3 @@ void parseFile(ifstream* inFile,
 	*suffixIndices = &suffixes_result->at(0);
 }
 
-// count characters
-__global__ __host__ countChar(Node* root, const char* text, int* numChar){
-    // ADD CODE HERE
-}
-
-// pre-order traversal
-__global__ __host__ serialize(Node* root, const char* text, char* output, int* numChar){
-    // ADD CODE HERE
-}
-

@@ -129,3 +129,24 @@ __global__ void printTree(Node* root, const char* text){
 	printTreeRe(root,text,0);
 }
 
+// count characters
+__host__ __device__ void countChar(Node* root, int* numChar){
+    if(root == NULL){
+	return;
+    }
+    *numChar++;
+    for(int i = 0 ; i < NUM_CHILDREN ; i++){
+	countChar(root->children[i], numChar);
+    }
+    *numChar++;
+}
+
+// pre-order traversal
+__host__ __device__ void serialize(Node* root, const char* text, char* output, int* numChar, int* counter){
+    if(counter == 0){
+	output = (char*) malloc(sizeof(char)* (*numChar));
+    }
+
+
+}
+

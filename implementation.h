@@ -51,5 +51,8 @@ __device__ void combineNode(struct Node** address, struct Node* node2, const cha
 __device__ void addNode(struct Node** address, struct Node* node2, const char* text);
 __device__ void printNode(struct Node* node, const char* text);
 __global__ void printTree(struct Node* root, const char* text);
-
+// count characters
+void countChar(Node* root, int* numChar);
+// pre-order traversal
+void serialize(Node* root, const char* text, char* output, int* numChar, int* counter);
 #endif

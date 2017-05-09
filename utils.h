@@ -7,6 +7,7 @@
 #include <fstream>
 #include <vector>
 #include <sys/time.h>
+
 using namespace std;
 
 
@@ -27,11 +28,6 @@ void parseFile(ifstream* inFile,
 		int* totalLength, int* numStrings, int* numSuffixes) 
 		throw (NotAllowedSymbolException);
 
-// count characters
-__global__ __host__ countChar(Node* root, const char* text, int* numChar);
-
-// pre-order traversal
-__global__ __host__ serialize(Node* root, const char* text, char* output, int* numChar);
 
 #endif
 
