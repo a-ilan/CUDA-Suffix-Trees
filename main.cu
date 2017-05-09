@@ -73,7 +73,7 @@ int main(int argc, char** argv){
 		const char* text; //all the strings concatenated into a single string
 		int* indices; //the starting index of each string
 		int* suffixes; //the starting index of each suffix
-		int totalLength; //total length of all the strings
+		int totalLength; //length of text (includes term sequence)
 		int numStrings; //number of strings
 		int numSuffixes; //number of suffixes
 		parseFile(&inputFile,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
@@ -85,18 +85,33 @@ int main(int argc, char** argv){
 		cout << ", method: " << method << endl;	
 		cout << "Input file: " << inputFileName;
 		cout << ", Number of strings: " << numStrings;
+		cout << ", Number of suffixes: " << numSuffixes;
 		cout << ", total length: " << totalLength << endl;
 
 		//process method
 		switch(method){
 		case 1:
-			impl1(text, indices, totalLength, numStrings, bsize, bcount);
+			impl1(text, 
+				indices, 
+				totalLength, 
+				numStrings, 
+				bsize, bcount);
 			break;
 		case 2:
-			impl2(text, indices, totalLength, numStrings, bsize, bcount);
+			impl2(text, 
+				indices, 
+				suffixes, 
+				totalLength, 
+				numStrings, 
+				numSuffixes,
+				bsize, bcount);
 			break;
 		case 3:
-			impl3(text, indices, totalLength, numStrings, bsize, bcount);
+			impl3(text, 
+				indices, 
+				totalLength, 
+				numStrings, 
+				bsize, bcount);
 			break;
 		default:
 			cout << "Method " << method << " does not exist. Try method 1, 2, or 3.\n";
