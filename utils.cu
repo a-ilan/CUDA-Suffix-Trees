@@ -11,6 +11,10 @@ double Timer::get(){
 	return elapsedTime.tv_sec*1000.0+elapsedTime.tv_usec/1000.0;// Returning in milliseconds.
 }
 
+const char* NotAllowedSymbolException::what() const throw(){
+	return "Input contains non-allowed symbols ('$', '#', and ')').";
+}
+
 //parse a file
 //for example input with the following words: apple, banana, cat, dog
 //text: "apple#0$banana#1$cat#2$dog#3$" 
@@ -20,7 +24,8 @@ double Timer::get(){
 //suffixIndices: [0,1,2,3,4, 8,9,10,11,12,13, 17,18,19, 23,24,25]
 void parseFile(ifstream* inFile, 
 		const char** text, int** indices, int** suffixIndices,  
-		int* totalLength, int* numStrings, int* numSuffixes){
+		int* totalLength, int* numStrings, int* numSuffixes)
+		throw(NotAllowedSymbolException){
 	string line;
 	string* strings_result = new string();
 	vector<int>* indices_result = new vector<int>();
@@ -35,6 +40,10 @@ void parseFile(ifstream* inFile,
 		indices_result->push_back(*totalLength);
 		for(int i = 0; i < line.length(); i++){
 			suffixes_result->push_back((*totalLength)+i);
+			if(line[i] == '$' || line[i] == '#' ||
+					line[i] == ')') {
+				throw NotAllowedSymbolException();
+			}
 		}
 		(*numStrings)++;
 		(*totalLength) += ss.str().length();
