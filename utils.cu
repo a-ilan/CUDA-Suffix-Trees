@@ -50,11 +50,12 @@ void parseFile(ifstream* inFile,
 		(*numSuffixes) += line.length();
 	}
 
-	*text = new char[*totalLength+1];
-	*indices = new int[*numStrings];
-	*suffixes = new int[*numSuffixes];	
+	*text = (char*)malloc(*totalLength+1);
+	*indices = (int*)malloc(sizeof(int)*(*numStrings));
+	*suffixes = (int*)malloc(sizeof(int)*(*numSuffixes));
+
 	strcpy(*text,strings_result.c_str());
-	memcpy(*indices,&indices_result[0],*numStrings);
-	memcpy(*suffixes,&suffixes_result[0],*numSuffixes);
+	memcpy(*indices,&indices_result[0],sizeof(int)*(*numStrings));
+	memcpy(*suffixes,&suffixes_result[0],sizeof(int)*(*numSuffixes));
 }
 

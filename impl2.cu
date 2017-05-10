@@ -68,8 +68,9 @@ void impl2(char* text, int* indices, int* suffixes,
 
 	cout << "running time: " << timer.get() << " ms" << endl;
 
-	printTree<<<1,1>>>(d_root,d_text);
-	cudaDeviceSynchronize();
+	char* output = NULL;
+	getSerialSuffixTree(d_root,d_text,&output);
+	printf("%s\n",output);
 
 	// free
 	cudaFree(d_text);

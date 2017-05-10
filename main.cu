@@ -119,9 +119,9 @@ int main(int argc, char** argv){
 		}
 
 		//clean program memory
-		delete[] text;
-		delete[] indices;
-		delete[] suffixes;
+		free(text);
+		free(indices);
+		free(suffixes);
 		CUDAErrorCheck(cudaDeviceReset());
 		outputFile.close();
 

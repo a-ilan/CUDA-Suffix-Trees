@@ -134,11 +134,12 @@ __host__ __device__ void countChar(Node* root, int* numChar){
     if(root == NULL){
 	return;
     }
-    *numChar += root->end - root->start;
+    int num = root->end - root->start;
+    *numChar += num;
     for(int i = 0 ; i < NUM_CHILDREN ; i++){
 	countChar(root->children[i], numChar);
     }
-    *numChar++;
+    (*numChar)+= num;
 }
 
 // pre-order traversal
@@ -155,17 +156,22 @@ __host__ __device__ void serialize(Node* root, char* text, char* output, int* co
     for(int i = 0 ; i < NUM_CHILDREN; i++){
 	serialize(root->children[i], text, output, counter);
     }
-    output[*counter] = ')';
-    *counter++;
+
+    for(int i = 0; i < num; i++){
+	output[*counter] = ')';
+	(*counter)++;
+    }
 }
 
 __global__ void countCharForSerialization(Node* root, int* numChar){
-	*numChar = 0;
+	*numChar = 1; // one for last char to be null
 	countChar(root,numChar);
 }
 
 __global__ void serialization(Node* root, char* text, char* output){
-	serialize(root,text,output,0);
+	int counter = 0;
+	serialize(root,text,output,&counter);
+	output[counter] = '\0';
 }
 
 //copy suffix tree from device to host by serializing it
@@ -180,11 +186,13 @@ int getSerialSuffixTree(Node* d_root, char* d_text, char** output){
 	cudaMalloc((void**)&d_size,sizeof(int));
 
 	countCharForSerialization<<<1,1>>>(d_root,d_size);
+	cudaDeviceSynchronize();
 	cudaMemcpy(&size,d_size,sizeof(int),cudaMemcpyDeviceToHost);
 	cudaMalloc((void**)&d_output,size);
 	*output = (char*)malloc(size);
 	serialization<<<1,1>>>(d_root,d_text,d_output);
 	cudaMemcpy(*output,d_output,size,cudaMemcpyDeviceToHost);
+	cudaDeviceSynchronize();
 
 	cudaFree(d_output);
 	cudaFree(d_size);

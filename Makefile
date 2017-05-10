@@ -19,6 +19,9 @@ impl3.o: impl3.cu implementation.h
 	$(CC) impl3.cu -dc
 
 run: test
+	./test --input in.txt --output out.txt --bsize 1024 --bcount 2 --method 1
+
+run2: test
 	./test --input in.txt --output out.txt --bsize 1024 --bcount 2 --method 2
 
 clean:

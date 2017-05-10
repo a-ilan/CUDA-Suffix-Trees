@@ -54,8 +54,12 @@ void impl1(char* text, int* indices, int totalLength, int numStrings, int bsize,
 	
 	cout << "running time: " << timer.get() << " ms" << endl;
 
-	printTree<<<1,1>>>(d_root,d_text);
-	cudaDeviceSynchronize();
+	//printTree<<<1,1>>>(d_root,d_text);
+	//cudaDeviceSynchronize();
+
+	char* output = NULL;
+	getSerialSuffixTree(d_root,d_text,&output);
+	printf("%s\n",output);
 
 	// free
 	cudaFree(d_text);
