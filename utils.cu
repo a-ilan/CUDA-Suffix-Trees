@@ -1,4 +1,6 @@
 #include "utils.h"
+#include <string>
+#include <algorithm>
 
 void Timer::set(){
 	gettimeofday( &startingTime, NULL );
@@ -13,6 +15,10 @@ double Timer::get(){
 
 const char* NotAllowedSymbolException::what() const throw(){
 	return "Input contains non-allowed symbols ('$', '#', and ')').";
+}
+
+void toLowercase(string* data){
+	transform(data->begin(), data->end(), data->begin(), ::tolower);
 }
 
 //parse a file
@@ -35,6 +41,7 @@ void parseFile(ifstream* inFile,
 	*numSuffixes = 0;
 	while(getline(*inFile,line)){
 		stringstream ss;
+		toLowercase(&line);
 		ss << line << "#" << *numStrings << "$";
 		strings_result += ss.str();
 		indices_result.push_back(*totalLength);

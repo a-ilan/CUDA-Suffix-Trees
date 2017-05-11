@@ -11,8 +11,9 @@ __global__ void constructSuffixTree(Node* root, char* text, int* indices, int to
 			int start = indices[dataid];
 			int end = dataid == numStrings-1? totalLength : indices[dataid+1];
 			for(; text[start] != '#'; start++){
-				char character = text[start];
-				Node** address = &(root->children[character]);
+				char c = text[start];
+				char index = charToIndex(c);
+				Node** address = &(root->children[index]);
 				Node* child = *address;
 				if(child == NULL){
 					child = createNode(start,end);
@@ -39,6 +40,14 @@ void impl1(char* text, int* indices, int totalLength, int numStrings, int bsize,
         int* d_indices = NULL;
 	Node* d_root = NULL;
 
+	CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitMallocHeapSize, 1000000000));
+	CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitStackSize, 10000));
+	size_t limit = 0;
+	cudaDeviceGetLimit(&limit, cudaLimitMallocHeapSize);
+	printf("cudaLimitMallocHeapSize: %u\n", (unsigned)limit);
+	cudaDeviceGetLimit(&limit, cudaLimitStackSize);
+	printf("cudaLimitStackSize: %u\n", (unsigned)limit);
+
         cudaMalloc((void**)&d_text, sizeof(char)*totalLength);
         cudaMalloc((void**)&d_indices, sizeof(int)*numStrings);
         cudaMalloc((void**)&d_root, sizeof(Node));
@@ -50,7 +59,9 @@ void impl1(char* text, int* indices, int totalLength, int numStrings, int bsize,
 	timer.set();
 
 	constructSuffixTree<<<bcount,bsize>>>(d_root,d_text,d_indices,totalLength,numStrings);
-	cudaDeviceSynchronize();
+
+	CUDAErrorCheck(cudaPeekAtLastError());
+	CUDAErrorCheck(cudaDeviceSynchronize());
 	
 	cout << "running time: " << timer.get() << " ms" << endl;
 
@@ -58,7 +69,8 @@ void impl1(char* text, int* indices, int totalLength, int numStrings, int bsize,
 	//cudaDeviceSynchronize();
 
 	char* output = NULL;
-	getSerialSuffixTree(d_root,d_text,&output);
+	int size = getSerialSuffixTree(d_root,d_text,&output);
+	printf("%d\n",size);
 	printf("%s\n",output);
 
 	// free

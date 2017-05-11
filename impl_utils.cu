@@ -1,7 +1,23 @@
 #include "implementation.h"
 
+__device__ char charToIndex(char c){
+	char index = 37;
+	if(c >= 'a' && c <= 'z')
+		index = c - 'a';
+	else if (c >= '0' && c <= '9')
+		index = c - '0' + 26;
+	else if (c == '#') index = 36;
+	else if (c == '$') index = 37;
+	return index; 
+}
+
+/*__device__ char indexToChar(char index){
+	return index;
+}*/
+
 __device__ Node* createNode(int start, int end){
 	Node* node = (Node*)malloc(sizeof(Node));
+	if(node == NULL) printf("CUDA ERROR: malloc failed\n");
 	for(int i = 0; i < NUM_CHILDREN; i++)
 		node->children[i] = NULL;
 	node->start = start;
@@ -17,6 +33,7 @@ __device__ bool splitNode(Node** address, int position, char* text){
 
 	//branchingNode is the child node of parentNode
 	Node* branchingNode = (Node*)malloc(sizeof(Node));
+	if(branchingNode == NULL) printf("CUDA ERROR: malloc failed\n");
 	for(int i = 0; i < NUM_CHILDREN; i++){
 		branchingNode->children[i] = node->children[i];
 	}
@@ -25,13 +42,15 @@ __device__ bool splitNode(Node** address, int position, char* text){
 
 	//parentNode is the parent of branchingNode
 	Node* parentNode = (Node*)malloc(sizeof(Node));
+	if(parentNode == NULL) printf("CUDA ERROR: malloc failed\n");
 	for(int i = 0; i < NUM_CHILDREN; i++){
 		parentNode->children[i] = NULL;
 	}
 	parentNode->start = node->start;
 	parentNode->end = position;
-	char character = text[position];
-	parentNode->children[character] = branchingNode;
+	char c = text[position];
+	char index = charToIndex(c);
+	parentNode->children[index] = branchingNode;
 
 	atomicCAS((address_type*)address, (address_type)node, (address_type)parentNode);
 	if(*address != parentNode){
@@ -59,7 +78,8 @@ __device__ void combineNode(Node** address, Node* node2, char* text){
 			if(isSplit){
 				node2->start = j;
 				char c = text[j];
-				Node** address2 = &((*address)->children[c]);
+				char index = charToIndex(c);
+				Node** address2 = &((*address)->children[index]);
 				addNode(address2,node2,text);
 			}
 			else{
@@ -75,7 +95,8 @@ __device__ void combineNode(Node** address, Node* node2, char* text){
 	if(i == i_end && j != j_end){
 		node2->start = j;
 		char c = text[j];
-		Node** address2 = &((*address)->children[c]);
+		char index = charToIndex(c); 
+		Node** address2 = &((*address)->children[index]);
 		addNode(address2,node2,text);
 	}
 	else if(i != i_end && j == j_end){
@@ -170,6 +191,7 @@ __global__ void countCharForSerialization(Node* root, int* numChar){
 
 __global__ void serialization(Node* root, char* text, char* output){
 	int counter = 0;
+	printf("SERIALIZING\n");
 	serialize(root,text,output,&counter);
 	output[counter] = '\0';
 }

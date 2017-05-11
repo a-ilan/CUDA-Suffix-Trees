@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include <vector>
+#include "cuda_error_check.h"
 #include "utils.h"
 using namespace std;
 
-#define NUM_CHILDREN 256
+#define NUM_CHILDREN 38
 typedef unsigned long long int address_type;
 
 //Node struct
@@ -45,6 +46,7 @@ void impl3(char* text, int* indices,
 	int bsize, int bcount);
 
 // Node functions in impl_util.cu
+__device__ char charToIndex(char c);
 __device__ Node* createNode(int start, int end);
 __device__ bool splitNode(Node** address, int position, char* text);
 __device__ void combineNode(Node** address, struct Node* node2, char* text);
