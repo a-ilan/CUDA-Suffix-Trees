@@ -16,7 +16,7 @@ int main(int argc, char** argv){
                         Output path: E.g., --output out.txt\n\
                         Block size: E.g., --bsize 1024\n\
                         Block count: E.g., --bcount 2\n\
-                        Method: E.g., --method 1, 2, or 3\n";
+                        Method: E.g., --method 1 or 2\n";
 		string inputFileName;
 		string outputFileName;
 		ifstream inputFile;
@@ -116,15 +116,8 @@ int main(int argc, char** argv){
 				numSuffixes,
 				bsize, bcount);
 			break;
-		case 3:
-			impl3(text, 
-				indices, 
-				totalLength, 
-				numStrings, 
-				bsize, bcount);
-			break;
 		default:
-			cout << "Method " << method << " does not exist. Try method 1, 2, or 3.\n";
+			cout << "Method " << method << " does not exist. Try method 1 or 2.\n";
 			break;
 		}
 

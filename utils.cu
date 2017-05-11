@@ -14,7 +14,7 @@ double Timer::get(){
 }
 
 const char* NotAllowedSymbolException::what() const throw(){
-	return "Input may only contain alphanumeric characters.";
+	return "ERROR: Input may only contain alphanumeric characters.";
 }
 
 void toLowercase(string* data){
