@@ -70,14 +70,15 @@ int main(int argc, char** argv){
 		}
 
 		//parse input file
+		vector<string> strings = parseFile(inputFile);
+		inputFile.close();
 		char* text; //all the strings concatenated into a single string
 		int* indices; //the starting index of each string
 		int* suffixes; //the starting index of each suffix
 		int totalLength; //length of text (includes term sequence)
 		int numStrings; //number of strings
 		int numSuffixes; //number of suffixes
-		parseFile(&inputFile,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
-		inputFile.close();
+		parseStrings(strings,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
 
 		//print program properties
 		cout << "Device: " << deviceName;
@@ -88,8 +89,8 @@ int main(int argc, char** argv){
 		cout << ", Number of suffixes: " << numSuffixes;
 		cout << ", total length: " << totalLength << endl;
 
-		CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitMallocHeapSize, 1000000000));
-		CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitStackSize, 10000));
+		CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitMallocHeapSize, 100000000));
+		CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitStackSize, 5000));
 		size_t limit = 0;
 		cudaDeviceGetLimit(&limit, cudaLimitMallocHeapSize);
 		printf("cudaLimitMallocHeapSize: %u\n", (unsigned)limit);

@@ -25,7 +25,9 @@ public:
 
 void saveResults(ofstream& outFile, char* solution);
 
-void parseFile(ifstream* inFile, 
+vector<string> parseFile(ifstream& inFile);
+
+void parseStrings(vector<string> strings, 
 		char** text, int** indices, int** suffixIndices,  
 		int* totalLength, int* numStrings, int* numSuffixes) 
 		throw (NotAllowedSymbolException);

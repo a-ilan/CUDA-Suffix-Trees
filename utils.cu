@@ -25,14 +25,18 @@ void saveResults(ofstream& outFile, char* solution){
 	outFile << solution << endl;
 }
 
-//parse a file
-//for example input with the following words: apple, banana, cat, dog
-//text: "apple#0$banana#1$cat#2$dog#3$" 
-//    where '#' specifies the start of a terminating sequence
-//    and '$' specifies the end of a terminating sequence
-//indices: [0, 8, 17, 23]
-//suffixIndices: [0,1,2,3,4, 8,9,10,11,12,13, 17,18,19, 23,24,25]
-void parseFile(ifstream* inFile, 
+
+vector<string> parseFile(ifstream& inFile){
+	string line;
+	vector<string> result;
+	while(getline(inFile,line)){
+		toLowercase(&line);
+		result.push_back(line);
+	}
+	return result;
+}
+
+void parseStrings(vector<string> strings,
 		char** text, int** indices, int** suffixes,  
 		int* totalLength, int* numStrings, int* numSuffixes)
 		throw(NotAllowedSymbolException){
@@ -43,9 +47,9 @@ void parseFile(ifstream* inFile,
 	*numStrings = 0;
 	*totalLength = 0;
 	*numSuffixes = 0;
-	while(getline(*inFile,line)){
+	for(int i = 0; i < strings.size(); i++){
+		line = strings[i];
 		stringstream ss;
-		toLowercase(&line);
 		ss << line << "#" << *numStrings << "$";
 		strings_result += ss.str();
 		indices_result.push_back(*totalLength);
