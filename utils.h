@@ -28,10 +28,14 @@ void saveResults(ofstream& outFile, char* solution);
 vector<string> parseFile(ifstream& inFile);
 
 void parseStrings(vector<string> strings, 
-		char** text, int** indices, int** suffixIndices,  
-		int* totalLength, int* numStrings, int* numSuffixes) 
+		char*& text, int*& indices, int*& suffixIndices,  
+		int& totalLength, int& numStrings, int& numSuffixes) 
 		throw (NotAllowedSymbolException);
 
+void parseToBatches(vector<string> strings, int numStringsPerBatch, int& numBatches,
+		char**& text, int**& indices, int**& suffixes,  
+		int*& totalLength, int*& numStrings, int*& numSuffixes)
+		throw(NotAllowedSymbolException);
 
 #endif
 

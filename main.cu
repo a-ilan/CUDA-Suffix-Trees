@@ -78,7 +78,7 @@ int main(int argc, char** argv){
 		int totalLength; //length of text (includes term sequence)
 		int numStrings; //number of strings
 		int numSuffixes; //number of suffixes
-		parseStrings(strings,&text,&indices,&suffixes,&totalLength,&numStrings,&numSuffixes);
+		parseStrings(strings,text,indices,suffixes,totalLength,numStrings,numSuffixes);
 
 		//print program properties
 		cout << "Device: " << deviceName;
