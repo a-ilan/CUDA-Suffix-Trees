@@ -35,10 +35,10 @@ struct Node{
 };
 
 // function prototype in impl1.h, impl2.h, and impl3.h
-void impl1(char* text, int* indices, 
+char* impl1(char* text, int* indices, 
 	int totalLength, int numStrings, 
 	int bsize, int bcount);
-void impl2(char* text, int* indices, int* suffixes,
+char* impl2(char* text, int* indices, int* suffixes,
 	int totalLength, int numStrings, int numSuffixes,
 	int bsize, int bcount);
 void impl3(char* text, int* indices, 

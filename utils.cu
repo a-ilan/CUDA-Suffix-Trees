@@ -14,11 +14,15 @@ double Timer::get(){
 }
 
 const char* NotAllowedSymbolException::what() const throw(){
-	return "Input contains non-allowed symbols ('$', '#', and ')').";
+	return "Input may only contain alphanumeric characters.";
 }
 
 void toLowercase(string* data){
 	transform(data->begin(), data->end(), data->begin(), ::tolower);
+}
+
+void saveResults(ofstream& outFile, char* solution){
+	outFile << solution << endl;
 }
 
 //parse a file
@@ -47,8 +51,7 @@ void parseFile(ifstream* inFile,
 		indices_result.push_back(*totalLength);
 		for(int i = 0; i < line.length(); i++){
 			suffixes_result.push_back((*totalLength)+i);
-			if(line[i] == '$' || line[i] == '#' ||
-					line[i] == ')') {
+			if(!isalnum(line[i])) {
 				throw NotAllowedSymbolException();
 			}
 		}

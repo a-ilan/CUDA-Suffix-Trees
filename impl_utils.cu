@@ -146,7 +146,6 @@ __device__ void printTreeRe(Node* root, char* text, int indent){
 }
 
 __global__ void printTree(Node* root, char* text){
-	printf("PRINTING TREE:\n");
 	printTreeRe(root,text,0);
 }
 
@@ -191,7 +190,6 @@ __global__ void countCharForSerialization(Node* root, int* numChar){
 
 __global__ void serialization(Node* root, char* text, char* output){
 	int counter = 0;
-	printf("SERIALIZING\n");
 	serialize(root,text,output,&counter);
 	output[counter] = '\0';
 }

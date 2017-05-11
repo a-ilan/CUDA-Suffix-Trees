@@ -19,8 +19,9 @@ __global__ void constructSuffixTree(Node* root,
 			int start = suffixes[dataid];
 			int end = getEndOfSuffix(start,text);
 
-			char character = text[start];
-			Node** address = &(root->children[character]);
+			char c = text[start];
+			char index = charToIndex(c);
+			Node** address = &(root->children[index]);
 			Node* child = *address;
 			if(child == NULL){
 				child = createNode(start,end);
@@ -33,7 +34,7 @@ __global__ void constructSuffixTree(Node* root,
 	}
 }
 
-void impl2(char* text, int* indices, int* suffixes, 
+char* impl2(char* text, int* indices, int* suffixes, 
 		int totalLength, int numStrings, int numSuffixes, 
 		int bsize, int bcount){
 	Timer timer;
@@ -64,17 +65,21 @@ void impl2(char* text, int* indices, int* suffixes,
 	constructSuffixTree<<<bcount,bsize>>>(d_root,
 		d_text,d_indices,d_suffixes,
 		totalLength,numStrings,numSuffixes);
-	cudaDeviceSynchronize();
+
+	CUDAErrorCheck(cudaPeekAtLastError());
+	CUDAErrorCheck(cudaDeviceSynchronize());
 
 	cout << "running time: " << timer.get() << " ms" << endl;
 
 	char* output = NULL;
-	getSerialSuffixTree(d_root,d_text,&output);
-	printf("%s\n",output);
+	int size = getSerialSuffixTree(d_root,d_text,&output);
+	printf("Output size: %d\n",size);
 
 	// free
 	cudaFree(d_text);
 	cudaFree(d_indices);
 	cudaFree(d_suffixes);
 	cudaFree(d_root);
+
+	return output;
 }

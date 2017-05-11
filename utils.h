@@ -23,6 +23,8 @@ public:
 	virtual const char* what() const throw();
 };
 
+void saveResults(ofstream& outFile, char* solution);
+
 void parseFile(ifstream* inFile, 
 		char** text, int** indices, int** suffixIndices,  
 		int* totalLength, int* numStrings, int* numSuffixes) 

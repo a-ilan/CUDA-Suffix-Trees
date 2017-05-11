@@ -25,7 +25,7 @@ run2: test
 	./test --input in.txt --output out.txt --bsize 1024 --bcount 2 --method 2
 
 run3: test
-	./test --input input/words.txt --output out.txt --bsize 1024 --bcount 2 --method 1
+	./test --input input/names.txt --output out.txt --bsize 1024 --bcount 2 --method 1
 
 clean:
 	rm -f *.o test

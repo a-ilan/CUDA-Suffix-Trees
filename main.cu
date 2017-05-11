@@ -88,17 +88,27 @@ int main(int argc, char** argv){
 		cout << ", Number of suffixes: " << numSuffixes;
 		cout << ", total length: " << totalLength << endl;
 
+		CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitMallocHeapSize, 1000000000));
+		CUDAErrorCheck(cudaDeviceSetLimit(cudaLimitStackSize, 10000));
+		size_t limit = 0;
+		cudaDeviceGetLimit(&limit, cudaLimitMallocHeapSize);
+		printf("cudaLimitMallocHeapSize: %u\n", (unsigned)limit);
+		cudaDeviceGetLimit(&limit, cudaLimitStackSize);
+		printf("cudaLimitStackSize: %u\n", (unsigned)limit);
+
+		char* output = NULL;
+
 		//process method
 		switch(method){
 		case 1:
-			impl1(text, 
+			output = impl1(text, 
 				indices, 
 				totalLength, 
 				numStrings, 
 				bsize, bcount);
 			break;
 		case 2:
-			impl2(text, 
+			output = impl2(text, 
 				indices, 
 				suffixes, 
 				totalLength, 
@@ -118,12 +128,14 @@ int main(int argc, char** argv){
 			break;
 		}
 
+		saveResults(outputFile, output);
+		outputFile.close();
+
 		//clean program memory
 		free(text);
 		free(indices);
 		free(suffixes);
 		CUDAErrorCheck(cudaDeviceReset());
-		outputFile.close();
 
 	} catch(const exception& e){
 		cerr << e.what() << endl;
