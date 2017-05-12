@@ -1,9 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <numeric>
 #include "cuda_error_check.h"
 #include "implementation.h"
 #include "utils.h"
+#include "sequential.cpp"
 
 using namespace std;
 
@@ -79,6 +81,15 @@ int main(int argc, char** argv){
 		int numStrings; //number of strings
 		int numSuffixes; //number of suffixes
 		parseStrings(strings,text,indices,suffixes,totalLength,numStrings,numSuffixes);
+
+		//test
+		cout << "Sequential test start:" << endl;
+		string concatenatedInput = accumulate(strings.begin(), strings.end(), string(""));
+		Timer timer;
+		timer.set();
+		sequential(concatenatedInput);
+		cout << "sequential version finished in: " << timer.get() << " ms" << endl;
+		cout << "sequential implementation end" << endl << endl;
 
 		//print program properties
 		cout << "Device: " << deviceName;
