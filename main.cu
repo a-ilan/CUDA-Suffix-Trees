@@ -113,7 +113,7 @@ int main(int argc, char** argv){
 		//process method
 		switch(method){
 		case 1:
-			output = impl1_batches(text, 
+			output = impl1(text, 
 				indices, 
 				totalLength, 
 				numStrings, 

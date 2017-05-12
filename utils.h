@@ -32,10 +32,5 @@ void parseStrings(vector<string> strings,
 		int& totalLength, int& numStrings, int& numSuffixes) 
 		throw (NotAllowedSymbolException);
 
-void parseToBatches(vector<string> strings, int numStringsPerBatch, int& numBatches,
-		char**& text, int**& indices, int**& suffixes,  
-		int*& totalLength, int*& numStrings, int*& numSuffixes)
-		throw(NotAllowedSymbolException);
-
 #endif
 
