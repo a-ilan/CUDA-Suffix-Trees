@@ -27,7 +27,7 @@ using std::flush;
 using std::endl;
 using std::string;
 
-int sequential(string input);
+int sequential(char* input);
 
 //
 // When a new tree is added to the table, we step
@@ -422,7 +422,7 @@ void AddPrefix( Suffix &active, int last_char_index )
     active.Canonize();
 };
 
-int sequential(string input)
+int sequential(char* input)
 {
 /*
     cout << "Normally, suffix trees require that the last\n"
@@ -454,13 +454,13 @@ int sequential(string input)
 // of edges is printed out, and a validation step is
 // optionally performed.
 //
-    dump_edges( N );
+    //dump_edges( N );
     //cout << "Would you like to validate the tree?"
     //     << flush;
     //std::string s;
     //getline( cin, s ); 
     //if ( s.size() > 0 && s[ 0 ] == 'Y' || s[ 0 ] == 'y' )
-        validate();
+        //validate();
     return 1;
 };
 
@@ -571,3 +571,13 @@ int walk_tree( int start_node, int last_char_so_far )
 }
 
 
+void print_seq_runtime(char* string){
+	//test
+	//cout << "Sequential test start:" << endl;
+	//string concatenatedInput = accumulate(strings.begin(), strings.end(), string(""));
+	Timer timer;
+	timer.set();
+	sequential(string);
+	cout << "sequential running time: " << timer.get() << " ms" << endl;
+	//cout << "sequential implementation end" << endl << endl;
+}

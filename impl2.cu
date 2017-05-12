@@ -69,7 +69,7 @@ char* impl2(char* text, int* indices, int* suffixes,
 	CUDAErrorCheck(cudaPeekAtLastError());
 	CUDAErrorCheck(cudaDeviceSynchronize());
 
-	cout << "running time: " << timer.get() << " ms" << endl;
+	cout << "impl2 suffixPerThread running time: " << timer.get() << " ms" << endl;
 
 	char* output = NULL;
 	int size = getSerialSuffixTree(d_root,d_text,&output);

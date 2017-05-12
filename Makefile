@@ -25,13 +25,13 @@ run2: test
 	./test --input in.txt --output out.txt --bsize 1024 --bcount 2 --method 2
 
 run11: test
-	./test --input input/names.txt --output out.txt --bsize 1024 --bcount 2 --method 1
+	./test --input input/male.txt --output out.txt --bsize 768 --bcount 2 --method 1
 
 run22: test
-	./test --input input/words.txt --output out.txt --bsize 1024 --bcount 2 --method 1
+	./test --input input/female.txt --output out.txt --bsize 768 --bcount 2 --method 1
 
 run33: test
-	./test --input input/shakespeare.txt --output out.txt --bsize 1024 --bcount 2 --method 1
+	./test --input input/last.txt --output out.txt --bsize 768 --bcount 2 --method 1
 
 clean:
 	rm -f *.o test

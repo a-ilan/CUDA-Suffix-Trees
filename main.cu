@@ -82,15 +82,6 @@ int main(int argc, char** argv){
 		int numSuffixes; //number of suffixes
 		parseStrings(strings,text,indices,suffixes,totalLength,numStrings,numSuffixes);
 
-		//test
-		cout << "Sequential test start:" << endl;
-		string concatenatedInput = accumulate(strings.begin(), strings.end(), string(""));
-		Timer timer;
-		timer.set();
-		sequential(concatenatedInput);
-		cout << "sequential version finished in: " << timer.get() << " ms" << endl;
-		cout << "sequential implementation end" << endl << endl;
-
 		//print program properties
 		cout << "Device: " << deviceName;
 		cout << ", bsize: " << bsize << ", bcount: " << bcount;
@@ -107,6 +98,8 @@ int main(int argc, char** argv){
 		printf("cudaLimitMallocHeapSize: %u\n", (unsigned)limit);
 		cudaDeviceGetLimit(&limit, cudaLimitStackSize);
 		printf("cudaLimitStackSize: %u\n", (unsigned)limit);
+
+		print_seq_runtime(text);
 
 		char* output = NULL;
 

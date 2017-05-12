@@ -55,7 +55,7 @@ char* impl1(char* text, int* indices, int totalLength, int numStrings, int bsize
 	CUDAErrorCheck(cudaPeekAtLastError());
 	CUDAErrorCheck(cudaDeviceSynchronize());
 	
-	cout << "running time: " << timer.get() << " ms" << endl;
+	cout << "impl1 stringPerThread running time: " << timer.get() << " ms" << endl;
 
 	//printTree<<<1,1>>>(d_root,d_text);
 	//cudaDeviceSynchronize();
