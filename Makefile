@@ -1,7 +1,10 @@
 CC = /usr/local/cuda-7.5/bin/nvcc
 
-test: main.cu utils.o impl_utils.o impl1.o impl2.o 
+test: main.cu utils.o impl_utils.o impl1.o impl2.o
 	$(CC) main.cu utils.o impl_utils.o impl1.o impl2.o -O3 -arch=sm_30 -o test
+
+#sequential.o: sequential.cpp
+#	$(CC) sequential.cpp -dc
 
 utils.o: utils.cu utils.h
 	$(CC) utils.cu -dc
