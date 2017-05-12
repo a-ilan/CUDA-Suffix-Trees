@@ -38,6 +38,9 @@ struct Node{
 char* impl1(char* text, int* indices, 
 	int totalLength, int numStrings, 
 	int bsize, int bcount);
+char* impl1_batches(char* text, int* indices, 
+	int totalLength, int numStrings, 
+	int bsize, int bcount);
 char* impl2(char* text, int* indices, int* suffixes,
 	int totalLength, int numStrings, int numSuffixes,
 	int bsize, int bcount);
